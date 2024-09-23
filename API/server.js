@@ -5,14 +5,14 @@ var app = express();
 // Enable CORS (must after initialise it)
 app.use(cors());
 
-var concertAPI = require("./controllerAPI/api-controller");
+var crowdfundingAPI = require("./controllerAPI/api-controller");
 
 var bodyparser=require("body-parser");
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:false}));
 
-app.use("/api/concerts", concertAPI);
+app.use("/api/crowdfundingAPI", crowdfundingAPI);
 
 
 app.listen(3060);
