@@ -18,6 +18,18 @@ router.get("/fundraisers", (req, res)=>{
 	})
 })
 
+router.get("/categories", (req, res)=>{
+	connection.query("SELECT * FROM CATEGORY", (err, records,fields)=> {
+		 if (err){
+			 console.error("Error while retrieve the data");
+		 }else{
+			 res.send(records);
+		 }
+	})
+})
+
+
+
 // router.get("/:id", (req, res)=>{
 // 	connection.query("select * from concert where ConcertID=" + req.params.id, (err, records,fields)=> {
 // 		 if (err){
