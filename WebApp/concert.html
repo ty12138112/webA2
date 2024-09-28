@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Concert page</title>
+  </head>
+  <body>
+      CONVENTION CENTRE XYZ<br>
+
+      <img src="header.jpg" width="400">
+
+      <h1>Concert page</h1>
+
+      <a href="/"><span>Home</span></a> | <span>Concerts</span>  | <a href="/add_concert"><span>Add a new concert</span></a>
+
+      <input type="button" onclick="loadConcerts();" value="Refresh"><Br>
+
+      <label>ID: </label>
+      <input type="text" id="txtID" placeholder="Enter ID" required>
+      <input type="button" value="Search" onclick="let txtID=document.getElementById('txtID').value; searchByID(txtID);">
+
+
+      <div id="data"></div>
+
+      <script>
+        function loadConcerts(){
+          //call GET API to get a list of Concerts
+          fetch("http://localhost:3060/api/concerts")
+            .then(response => response.json())
+            .then(data => {
+
+              const dataDiv=document.getElementById('data');
+              dataDiv.innerHTML="";
+
+              if(data.length>0){
+                data.forEach( concert => {
+                    const newP=document.createElement("p");
+                    newP.textContent=`Concert: ${concert.ArtistName}, Location: ${concert.Location}`;
+
+                    dataDiv.appendChild(newP);
+
+                    //for delete
+                    const newP2=document.createElement("p");
+                    newP2.innerHTML="<a href='#' onclick='deleteByID("+concert.ConcertID+");'>Delete</a>";
+                    dataDiv.appendChild(newP2);
+                });
+
+              }
+              else{
+                dataDiv.textContent="No concert data";
+              }
+            })
+            .catch(error=>{
+              console.error("Error fecthing data",error);
+              document.getElementById('data').textContent="Failed to load data";
+            });
+          }
+
+          function searchByID(id){
+            //call GET API to get a list of Concerts
+            fetch("http://localhost:3060/api/concerts/"+id)
+              .then(response => response.json())
+              .then(data => {
+
+                const dataDiv=document.getElementById('data');
+                dataDiv.innerHTML="";
+
+                if(data.length>0){
+                  data.forEach( concert => {
+                      const newP=document.createElement("p");
+                      newP.textContent=`Concert: ${concert.ArtistName}, Location: ${concert.Location}`;
+
+                      dataDiv.appendChild(newP);
+                  });
+
+                }
+                else{
+                  dataDiv.textContent="No concert data";
+                }
+              })
+              .catch(error=>{
+                console.error("Error fecthing data",error);
+                document.getElementById('data').textContent="Failed to load data";
+              });
+            }
+
+            function deleteByID(id){
+                // Send DELETE request to API
+                fetch('http://localhost:3060/api/concerts/'+id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                  alert(data.delete);
+                    if (data.delete === 'success') {
+                        alert("Concert deleted successfully!");
+                    } else if (data.delete === 'error') {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+
+      </script>
+  </body>
+</html>

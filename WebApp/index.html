@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Non-Profit Organization Home Page</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <!-- 导航菜单 -->
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/search">Search Fundraisers</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 非营利组织欢迎信息 -->
+    <section class="welcome">
+      <h1>Welcome to Our Non-Profit Organization</h1>
+      <h3>inspiring stories</h3>
+      <p>Xiaoming, who grew up in a remote mountainous area, has been eager to receive a good education since childhood.
+        However, the poverty of his family made his educational journey full of challenges. With the help of non-profit
+        organizations, Xiaoming not only had the opportunity to complete his high school studies, but also successfully
+        entered university. Now, he is pursuing a degree in computer science and dreams of one day using technology to
+        improve his hometown.</p>
+      <!-- 联系信息 -->
+      <p>Contact us: <a href="mailto:info@nonprofit.org">info@nonprofit.org</a></p>
+    </section>
+
+    <!-- 活跃筹款活动列表 -->
+    <section class="fundraiser-section">
+      <h2>Active Fundraisers</h2>
+      <div class="fundraiser-grid" id="data"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <!-- 页脚信息 -->
+    <p>&copy; 2024 Non-Profit Organization</p>
+  </footer>
+
+  
+
+  <script>
+    fetch("http://localhost:3060/api/crowdfundingAPI/fundraisers")
+      .then(response => response.json())
+      .then(data => {
+
+        const dataDiv = document.getElementById('data');
+        dataDiv.innerHTML = "";
+
+        if (data.length > 0) {
+          data.forEach(fundraiser => {
+            const newP = document.createElement("p");
+            newP.innerHTML = `<h3>${fundraiser.ORGANIZER}</h3>
+                    <p>Caption: ${fundraiser.CAPTION}</p>
+                    <p>Target Funding: ${fundraiser.TARGET_FUNDING} AUD</p>
+                    <p>Current Funding: ${fundraiser.CURRENT_FUNDING} AUD</p>
+                    <p>City: ${fundraiser.CITY}</p>
+                    <p>Category: ${fundraiser.CATEGORY_NAME}</p>`;
+
+            dataDiv.appendChild(newP);
+          });
+
+        }
+        else {
+          dataDiv.textContent = "No data";
+        }
+      })
+      .catch(error => {
+        console.error("Error fecthing data", error);
+        document.getElementById('data').textContent = "Failed to load data";
+      });
+
+    // fetch("http://localhost:3060/api/fundraisers")
+    // .then(response => response.json())
+    // .then(data => {
+    //     const dataDiv = document.getElementById('data');
+    //     dataDiv.innerHTML = "";
+
+    //     if (data.length > 0) {
+    //         data.forEach(fundraiser => {
+    //             const fundraiserEl = document.createElement('div');
+    //             fundraiserEl.className = 'fundraiser';
+    //             fundraiserEl.innerHTML = `
+    //                 <h3>${fundraiser.ORGANIZER}</h3>
+    //                 <p>Caption: ${fundraiser.CAPTION}</p>
+    //                 <p>Target Funding: ${fundraiser.TARGET_FUNDING} AUD</p>
+    //                 <p>Current Funding: ${fundraiser.CURRENT_FUNDING} AUD</p>
+    //                 <p>City: ${fundraiser.CITY}</p>
+    //                 <p>Category: ${fundraiser.CATEGORY_NAME}</p>
+    //                 <!-- 如果有图片，可以在这里添加 -->
+    //             `;
+    //             dataDiv.appendChild(fundraiserEl);
+    //         });
+    //     } else {
+    //         dataDiv.textContent = "No fundraiser data";
+    //     }
+    // })
+    // .catch(error => {
+    //     console.error("Error fetching data");
+    //     document.getElementById('data').textContent = "Failed to load data";
+    // });
+
+
+  </script>
+</body>
+
+</html>

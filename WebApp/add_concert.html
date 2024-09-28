@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Main page</title>
+  </head>
+  <body>
+      CONVENTION CENTRE XYZ<br>
+
+      <img src="header.jpg" width="400">
+
+      <h1>Add a new concert</h1>
+
+       <a href="/"><span>Home</span></a> |
+       <a href="/concert"><span>Concerts</span></a>  |
+       <span>Add a new concert</span>
+
+       <form id="form1" onsubmit="addConcert(); return(false);">
+         <label>ID*: </label>
+         <input type="text" id="txtID" placeholder="Enter ID" required>
+
+         <label>Artist name*: </label>
+         <input type="text" id="txtArtistName" placeholder="Enter artist name" required>
+
+         <label>Location*: </label>
+         <input type="text" id="txtLocation" placeholder="Enter location" required>
+
+         <input type="reset" value="Clear">
+         <input type="submit" value="Submit">
+       </form>
+
+       <script>
+         function addConcert(){
+                 // Get values from the form using DOM
+           const ConcertID = document.getElementById('txtID').value.trim();
+           const ArtistName = document.getElementById('txtArtistName').value.trim();
+           const Location = document.getElementById('txtLocation').value.trim();
+
+           // Validate the form. Assume, all fields are required
+           if (!ConcertID || !ArtistName || !Location) {
+                 alert("All fields are required!");
+                 return;
+             }
+
+             // Create a data (JSON) to send in the POST request
+             const postData = { 'ConcertID':ConcertID, 'ArtistName':ArtistName, 'Location':Location };
+             alert(JSON.stringify(postData));
+
+             // Send the POST request to NodeJS API server
+             fetch('http://localhost:3060/api/concerts', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(postData)
+             })
+             .then(response => response.json())
+             .then(data => {
+                 if (data.insert === 'success') {
+                     alert("Concert added successfully!");
+                     document.getElementById('form1').reset(); // to clear the form
+                 } else if (data.insert === 'error') {
+                     alert("Error: " + data.message);
+                 }
+             })
+             .catch(error => {
+                 console.error("Error:", error);
+             });
+         }
+        </script>
+
+  </body>
+</html>
