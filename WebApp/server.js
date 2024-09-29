@@ -16,15 +16,15 @@ app.get("/",(req,res)=>{
   res.sendFile(path.join(__dirname,"index.html"));
 });
 
-app.get("/concert",(req,res)=>{
-  res.sendFile(path.join(__dirname,"concert.html"));
+app.get("/search",(req,res)=>{
+  res.sendFile(path.join(__dirname,"search.html"));
 });
 
-app.get("/add_concert",(req,res)=>{
-  res.sendFile(path.join(__dirname,"add_concert.html"));
+app.get("/fundraiser",(req,res)=>{
+  res.sendFile(path.join(__dirname,"fundraiser.html"));
 });
 
-//we will add more routes here
+
 
 app.listen(8080,()=>{
   console.log("Running in 8080");

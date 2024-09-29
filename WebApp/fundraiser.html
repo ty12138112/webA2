@@ -4,15 +4,18 @@
       <title>Main page</title>
   </head>
   <body>
-      CONVENTION CENTRE XYZ<br>
+      <h1>Fundraiser page</h1>
 
-      <img src="header.jpg" width="400">
-
-      <h1>Add a new concert</h1>
-
-       <a href="/"><span>Home</span></a> |
-       <a href="/concert"><span>Concerts</span></a>  |
-       <span>Add a new concert</span>
+      <header>
+        <!-- 导航菜单 -->
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/search">Search </a></li>
+            <li><a href="/fundraiser">Fundraisers</a></li>
+          </ul>
+        </nav>
+      </header>
 
        <form id="form1" onsubmit="addConcert(); return(false);">
          <label>ID*: </label>

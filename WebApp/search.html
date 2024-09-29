@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Fundraisers</title>
+  <style>
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+
+    .fundraiser {
+      border: 1px solid #ccc;
+      margin: 10px 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Search Fundraisers</h1>
+
+  <header>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/fundraiser">Fundraisers</a></li>
+        </ul>
+    </nav>
+</header>
+
+  <section id="searchSection">
+    <form id="searchForm">
+      <div>
+        <label><input type="checkbox" name="criteria" value="organizer"> Organizer</label>
+        <input type="text" id="organizer" name="organizer" placeholder="Organizer name">
+      </div>
+      <div>
+        <label><input type="checkbox" name="criteria" value="city"> City</label>
+        <input type="text" id="city" name="city" placeholder="City name">
+      </div>
+      <div>
+        <label><input type="checkbox" name="criteria" value="category"> Category</label>
+        <input type="text" id="category" name="category" placeholder="Category name">
+      </div>
+      <button type="button" onclick="searchFundraisers()">Search</button>
+      <button type="button" onclick="clearCheckboxes()">Clear</button>
+    </form>
+  </section>
+
+  <div id="results"></div>
+  <div id="errorMessage" class="error-message"></div>
+
+  <script>
+    function searchFundraisers() {
+      const form = document.getElementById('searchForm');
+      const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+
+      if (checkboxes.length === 0) {
+        alert("Please select at least one search criteria.");
+        return;
+      }
+
+      const searchParams = new URLSearchParams();
+      checkboxes.forEach(checkbox => {
+        const inputField = document.getElementById(checkbox.value);
+        if (inputField.value) {
+          searchParams.append(checkbox.value, inputField.value);
+        }
+      });
+
+      // Replace with your actual API endpoint
+      fetch(`http://localhost:3060/api/crowdfundingAPI/search?${searchParams.toString()}`)
+        .then(response => response.json())
+        .then(data => displayResults(data))
+        .catch(error => {
+          console.error('Error fetching fundraisers:', error);
+          displayError("An error occurred while searching for fundraisers.");
+        });
+    }
+
+    function displayResults(fundraisers) {
+      const resultsDiv = document.getElementById('results');
+      const errorMessageDiv = document.getElementById('errorMessage');
+
+      resultsDiv.innerHTML = '';
+      errorMessageDiv.textContent = '';
+
+      if (fundraisers.length === 0) {
+        displayError("No fundraisers found matching the selected criteria.");
+        return;
+      }
+
+      fundraisers.forEach(fundraiser => {
+        const fundraiserElement = document.createElement('div');
+        fundraiserElement.className = 'fundraiser';
+        fundraiserElement.innerHTML = `
+                    <h3>${fundraiser.CAPTION}</h3>
+                    <p>Organizer: ${fundraiser.ORGANIZER}</p >
+                    <p>City: ${fundraiser.CITY}</p >
+                    <p>Category: ${fundraiser.CATEGORY_NAME}</p >
+                    <p><a href="/fundraiser">More details</a></p >
+                `;
+        resultsDiv.appendChild(fundraiserElement);
+      });
+    }
+
+    function displayError(message) {
+      const errorMessageDiv = document.getElementById('errorMessage');
+      errorMessageDiv.textContent = message;
+    }
+
+    function clearCheckboxes() {
+      const form = document.getElementById('searchForm');
+      const inputFields = form.querySelectorAll('input[type="text"]');
+
+      checkboxes.forEach(checkbox => checkbox.checked = false);
+      inputFields.forEach(input => input.value = '');
+
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('errorMessage').textContent = '';
+    }
+
+  </script>
