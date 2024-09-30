@@ -1,75 +1,115 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <title>Main page</title>
-  </head>
-  <body>
-      <h1>Fundraiser page</h1>
+<html lang="en">
 
-      <header>
-        <!-- 导航菜单 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+        #data {
+            margin-top: 20px;
+        }
+        .fundraiser-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .fundraiser-item a {
+            text-decoration: none;
+            color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Search Page</h1>
+
+    <header>
         <nav>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/search">Search </a></li>
-            <li><a href="/fundraiser">Fundraisers</a></li>
-          </ul>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="/fundraiser">Fundraisers</a></li>
+            </ul>
         </nav>
-      </header>
+    </header>
 
-       <form id="form1" onsubmit="addConcert(); return(false);">
-         <label>ID*: </label>
-         <input type="text" id="txtID" placeholder="Enter ID" required>
+    <section id="searchSection">
+        <form id="searchForm">
+            <input type="text" id="organizer" name="organizer" placeholder="Organizer">
+            <input type="text" id="city" name="city" placeholder="City">
+            <input type="text" id="category" name="category" placeholder="Category">
+            <button type="button" onclick="searchFundraisers()">Search</button>
+            <button type="button" onclick="clearForm()">Clear</button>
+        </form>
+    </section>
 
-         <label>Artist name*: </label>
-         <input type="text" id="txtArtistName" placeholder="Enter artist name" required>
+    <div id="data"></div>
 
-         <label>Location*: </label>
-         <input type="text" id="txtLocation" placeholder="Enter location" required>
+    <script>
+        // Sample fundraiser data
+        const fundraisers = [
+            { id: 1, organizer: "John Doe", city: "New York", category: "Charity", title: "Help the Homeless" },
+            { id: 2, organizer: "Jane Smith", city: "Los Angeles", category: "Environment", title: "Save the Rainforest" },
+            { id: 3, organizer: "Alice Johnson", city: "Chicago", category: "Health", title: "Cancer Research Fund" }
+        ];
 
-         <input type="reset" value="Clear">
-         <input type="submit" value="Submit">
-       </form>
+        function searchFundraisers() {
+            const organizer = document.getElementById('organizer').value.toLowerCase();
+            const city = document.getElementById('city').value.toLowerCase();
+            const category = document.getElementById('category').value.toLowerCase();
 
-       <script>
-         function addConcert(){
-                 // Get values from the form using DOM
-           const ConcertID = document.getElementById('txtID').value.trim();
-           const ArtistName = document.getElementById('txtArtistName').value.trim();
-           const Location = document.getElementById('txtLocation').value.trim();
+            const results = fundraisers.filter(fundraiser => {
+                return (!organizer || fundraiser.organizer.toLowerCase().includes(organizer)) &&
+                       (!city || fundraiser.city.toLowerCase().includes(city)) &&
+                       (!category || fundraiser.category.toLowerCase().includes(category));
+            });
 
-           // Validate the form. Assume, all fields are required
-           if (!ConcertID || !ArtistName || !Location) {
-                 alert("All fields are required!");
-                 return;
-             }
+            displayResults(results);
+        }
 
-             // Create a data (JSON) to send in the POST request
-             const postData = { 'ConcertID':ConcertID, 'ArtistName':ArtistName, 'Location':Location };
-             alert(JSON.stringify(postData));
+        function displayResults(results) {
+            const dataDiv = document.getElementById('data');
+            dataDiv.innerHTML = ''; // Clear previous results
 
-             // Send the POST request to NodeJS API server
-             fetch('http://localhost:3060/api/concerts', {
-                 method: 'POST',
-                 headers: {
-                     'Content-Type': 'application/json'
-                 },
-                 body: JSON.stringify(postData)
-             })
-             .then(response => response.json())
-             .then(data => {
-                 if (data.insert === 'success') {
-                     alert("Concert added successfully!");
-                     document.getElementById('form1').reset(); // to clear the form
-                 } else if (data.insert === 'error') {
-                     alert("Error: " + data.message);
-                 }
-             })
-             .catch(error => {
-                 console.error("Error:", error);
-             });
-         }
-        </script>
+            if (results.length === 0) {
+                dataDiv.innerHTML = '<p>No fundraisers found.</p>';
+                return;
+            }
 
-  </body>
+            results.forEach(fundraiser => {
+                const div = document.createElement('div');
+                div.classList.add('fundraiser-item');
+                div.innerHTML = `
+                    <h3>${fundraiser.title}</h3>
+                    <p>Organizer: ${fundraiser.organizer}</p>
+                    <p>City: ${fundraiser.city}</p>
+                    <p>Category: ${fundraiser.category}</p>
+                    <a href="/fundraiser?id=${fundraiser.id}">View Details</a>
+                `;
+                dataDiv.appendChild(div);
+            });
+        }
+
+        function clearForm() {
+            document.getElementById('searchForm').reset();
+            document.getElementById('data').innerHTML = ''; // Clear previous results
+        }
+    </script>
+</body>
+
 </html>
+
