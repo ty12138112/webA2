@@ -2,114 +2,242 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Concert Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        nav ul li {
-            display: inline;
-            margin-right: 15px;
-        }
-        #data {
-            margin-top: 20px;
-        }
-        .fundraiser-item {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        .fundraiser-item a {
-            text-decoration: none;
-            color: blue;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fundraiser Details</title>
+  <style>
+    /* Reset some default styles */
+body, h1, h3, p {
+    margin: 0;/* Reset margin */
+    padding: 0;/* Reset padding */
+}
+
+/* Basic body styles */
+body {
+    font-family: Arial, sans-serif;/* Set font */
+    line-height: 1.6;/* Set line height for readability */
+    background-color: #f4f4f4;/* Light gray background */
+    color: #333;/* Dark text color */
+}
+
+/* Header styles */
+header {
+    background: #007bff;/* Blue background for header */
+    color: #fff;/* White text color */
+    padding: 10px 0;/* Vertical padding */
+    margin-bottom: 20px;/* Space below header */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Fundraiser details styles */
+.fundraiser-details {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Button styles */
+.donate-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.donate-btn:hover {
+    background-color: #218838;
+}
+
+/* Error message styles */
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        margin: 5px 0;
+    }
+
+    .fundraiser-details {
+        margin: 10px;
+    }
+}
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    nav ul li {
+      display: inline;
+      margin-right: 15px;
+    }
+
+    .fundraiser-details {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .donate-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .donate-btn:hover {
+      background-color: #218838;
+    }
+
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
-    <h1>Search Page</h1>
+  <h1>Fundraiser Details</h1>
 
-    <header>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/search">Search</a></li>
-                <li><a href="/fundraiser">Fundraisers</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/search">Search</a></li>
+        <li><a href="/fundraiser">Fundraisers</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <section id="searchSection">
-        <form id="searchForm">
-            <input type="text" id="organizer" name="organizer" placeholder="Organizer">
-            <input type="text" id="city" name="city" placeholder="City">
-            <input type="text" id="category" name="category" placeholder="Category">
-            <button type="button" onclick="searchFundraisers()">Search</button>
-            <button type="button" onclick="clearForm()">Clear</button>
-        </form>
-    </section>
+  <div id="data" class="data">
+     <!-- This div will be populated with fundraiser details -->
+  </div>
 
-    <div id="data"></div>
+  <div id="errorMessage" class="error-message"></div>
+  <!-- This div will display error messages if any occur -->
 
-    <script>
-        // Sample fundraiser data
-        const fundraisers = [
-            { id: 1, organizer: "John Doe", city: "New York", category: "Charity", title: "Help the Homeless" },
-            { id: 2, organizer: "Jane Smith", city: "Los Angeles", category: "Environment", title: "Save the Rainforest" },
-            { id: 3, organizer: "Alice Johnson", city: "Chicago", category: "Health", title: "Cancer Research Fund" }
-        ];
+  <script>
+    // Get the fundraiser ID from the URL (assuming it's passed as a query parameter)
+    const urlParams = new URLSearchParams(window.location.search);
+    const fundraiserId = urlParams.get('id'); 
 
-        function searchFundraisers() {
-            const organizer = document.getElementById('organizer').value.toLowerCase();
-            const city = document.getElementById('city').value.toLowerCase();
-            const category = document.getElementById('category').value.toLowerCase();
+    
+    fetch(`http://localhost:3060/api/crowdfundingAPI/fundraiser/${fundraiserId}`)
+      .then(response => response.json())
+      .then(data => {
+ // Fetch fundraiser details from the API using the fundraiser ID
+        const dataDiv = document.getElementById('data');
+        dataDiv.innerHTML = "";
+    // Check if there are any fundraisers in the data
+        if (data.length > 0) {
+          // Loop through each fundraiser and create a new paragraph element
+          data.forEach(fundraiser => {
+            const newP = document.createElement("p");
+            newP.innerHTML = `<h3>${fundraiser.ORGANIZER}</h3>
+                    <p>Caption: ${fundraiser.CAPTION}</p>
+                    <p>Target Funding: ${fundraiser.TARGET_FUNDING} AUD</p>
+                    <p>Current Funding: ${fundraiser.CURRENT_FUNDING} AUD</p>
+                    <p>City: ${fundraiser.CITY}</p>
+                    <p>Category: ${fundraiser.CATEGORY_NAME}</p>`;
 
-            const results = fundraisers.filter(fundraiser => {
-                return (!organizer || fundraiser.organizer.toLowerCase().includes(organizer)) &&
-                       (!city || fundraiser.city.toLowerCase().includes(city)) &&
-                       (!category || fundraiser.category.toLowerCase().includes(category));
-            });
+            dataDiv.appendChild(newP);// Append the new paragraph to the dataDiv
+          });
 
-            displayResults(results);
         }
-
-        function displayResults(results) {
-            const dataDiv = document.getElementById('data');
-            dataDiv.innerHTML = ''; // Clear previous results
-
-            if (results.length === 0) {
-                dataDiv.innerHTML = '<p>No fundraisers found.</p>';
-                return;
-            }
-
-            results.forEach(fundraiser => {
-                const div = document.createElement('div');
-                div.classList.add('fundraiser-item');
-                div.innerHTML = `
-                    <h3>${fundraiser.title}</h3>
-                    <p>Organizer: ${fundraiser.organizer}</p>
-                    <p>City: ${fundraiser.city}</p>
-                    <p>Category: ${fundraiser.category}</p>
-                    <a href="/fundraiser?id=${fundraiser.id}">View Details</a>
-                `;
-                dataDiv.appendChild(div);
-            });
+        else {
+          // If no data is found, display a message
+          dataDiv.textContent = "No data";
         }
+      })
+      .catch(error => {
+        console.error("Error fecthing data", error);
+        document.getElementById('data').textContent = "Failed to load data";
+      });
 
-        function clearForm() {
-            document.getElementById('searchForm').reset();
-            document.getElementById('data').innerHTML = ''; // Clear previous results
-        }
-    </script>
+
+
+    // // Function to fetch fundraiser details
+    // // function fetchFundraiserDetails() {
+    //   fetch(`http://localhost:3060/api/crowdfundingAPI/fundraiser/${fundraiserId}`)
+    //     .then(response => {
+    //       if (!response.ok) {
+    //         throw new Error('Network response was not ok');
+    //       }
+    //       return response.json();
+    //     })
+    //     .then(data => displayFundraiserDetails(data))
+    //     .catch(error => {
+    //       console.error('Error fetching fundraiser details:', error);
+    //       displayError("An error occurred while fetching fundraiser details.");
+    //     });
+    // // }
+
+    // // Function to display fundraiser details
+    // function displayFundraiserDetails(fundraiser) {
+    //   document.getElementById('fundraiserTitle').innerText = fundraiser.CAPTION;
+    //   document.getElementById('fundraiserOrganizer').innerText = fundraiser.ORGANIZER;
+    //   document.getElementById('fundraiserDescription').innerText = fundraiser.DESCRIPTION || "No description available.";
+    //   document.getElementById('fundraiserGoal').innerText = fundraiser.GOAL || "No goal specified.";
+    //   document.getElementById('fundraiserCity').innerText = fundraiser.CITY || "No city specified.";
+    // }
+
+    // Function to handle donation button click
+    document.getElementById('donateBtn').addEventListener('click', function() {
+      alert("This feature is under construction.");
+    });
+
+    // Function to display error messages
+    function displayError(message) {
+      const errorMessageDiv = document.getElementById('errorMessage');
+      errorMessageDiv.textContent = message;
+    }
+
+    // // Call the function to fetch the fundraiser details on page load
+    // fetchFundraiserDetails();
+  </script>
 </body>
 
 </html>
-

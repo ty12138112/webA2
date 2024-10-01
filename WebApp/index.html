@@ -5,14 +5,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Non-Profit Organization Home Page</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    .image-gallery {
+    display: flex;
+    justify-content: center; /* Center the images */
+    gap: 15px; /* Space between images */
+    margin-top: 20px; /* Space above the gallery */
+}
+
+.image-gallery img {
+    width: 200px; /* Set a fixed width */
+    height: 150px; /* Set a fixed height */
+    object-fit: cover; /* Maintain aspect ratio and cover the area */
+    border-radius: 5px; /* Optional: rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for depth */
+}
+
+    /* Reset some default styles */
+    body,
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Basic body styles */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    /* Header styles */
+    header {
+      background: #007bff;
+      color: #fff;
+      padding: 10px 0;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav ul li a:hover {
+      text-decoration: underline;
+    }
+
+    /* Main section styles */
+    main {
+      padding: 20px;
+    }
+
+    /* Welcome section styles */
+    .welcome {
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .welcome h1 {
+      color: #007bff;
+    }
+
+    /* Fundraiser section styles */
+    .fundraiser-section {
+      margin-top: 20px;
+    }
+
+    .fundraiser-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .fundraiser-grid p {
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Footer styles */
+    .footer {
+      background: #007bff;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+      }
+
+      nav ul li {
+        margin: 5px 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
   <h1>Home page</h1>
 
   <header>
-    <!-- 导航菜单 -->
+    <!-- Navigation menu -->
     <nav>
       <ul>
         <li><a href="/">Home</a></li>
@@ -23,7 +141,7 @@
   </header>
 
   <main>
-    <!-- 非营利组织欢迎信息 -->
+    <!-- Welcome section for the non-profit organization -->
     <section class="welcome">
       <h1>Welcome to Our Non-Profit Organization</h1>
       <h3>inspiring stories</h3>
@@ -32,33 +150,46 @@
         organizations, Xiaoming not only had the opportunity to complete his high school studies, but also successfully
         entered university. Now, he is pursuing a degree in computer science and dreams of one day using technology to
         improve his hometown.</p>
-      <!-- 联系信息 -->
+      <!-- Contact information for inquiries -->
       <p>Contact us: <a href="mailto:info@nonprofit.org">qwe@qwe.org</a></p>
     </section>
 
-    <!-- 活跃筹款活动列表 -->
+    <!-- Section displaying active fundraising campaigns -->
     <section class="fundraiser-section">
       <h2>Active Fundraisers</h2>
-      <div class="fundraiser-grid" id="data"></div>
+      <div class="fundraiser-grid" id="data">
+        <!-- Fundraiser items will be dynamically inserted here -->
+      </div>
+
     </section>
   </main>
 
+  <div class="image-gallery">
+
+    <img src="photo/1.jpg" alt="Image 1">
+    <img src="photo/2.png" alt="Image 2">
+    <img src="photo/3.jpg" alt="Image 3">
+  </div>
+  
+
   <footer class="footer">
-    <!-- 页脚信息 -->
+    <!-- Footer information -->
     <p>&copy; 2024 Non-Profit Organization</p>
   </footer>
 
-  
+
 
   <script>
+    // Fetch active fundraisers from the API
     fetch("http://localhost:3060/api/crowdfundingAPI/fundraisers")
       .then(response => response.json())
       .then(data => {
 
         const dataDiv = document.getElementById('data');
         dataDiv.innerHTML = "";
-
+        // Check if there are any fundraisers in the data
         if (data.length > 0) {
+          // Loop through each fundraiser and create a new paragraph element
           data.forEach(fundraiser => {
             const newP = document.createElement("p");
             newP.innerHTML = `<h3>${fundraiser.ORGANIZER}</h3>
@@ -68,11 +199,12 @@
                     <p>City: ${fundraiser.CITY}</p>
                     <p>Category: ${fundraiser.CATEGORY_NAME}</p>`;
 
-            dataDiv.appendChild(newP);
+            dataDiv.appendChild(newP);// Append the new paragraph to the dataDiv
           });
 
         }
         else {
+          // If no data is found, display a message
           dataDiv.textContent = "No data";
         }
       })
@@ -98,7 +230,7 @@
     //                 <p>Current Funding: ${fundraiser.CURRENT_FUNDING} AUD</p>
     //                 <p>City: ${fundraiser.CITY}</p>
     //                 <p>Category: ${fundraiser.CATEGORY_NAME}</p>
-    //                 <!-- 如果有图片，可以在这里添加 -->
+    //                  <!-- If there are images, they can be added here -->
     //             `;
     //             dataDiv.appendChild(fundraiserEl);
     //         });
@@ -113,4 +245,3 @@
 
 
   </script>
-  
